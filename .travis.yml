@@ -1,7 +1,7 @@
 services:
   - docker
 
-environment:
+env:
   - CONTAINER=hyperkube-iscsi
 
 script:
