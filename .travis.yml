@@ -5,4 +5,4 @@ environment:
   - CONTAINER=hyperkube-iscsi
 
 script:
-  - build-container.sh
+  - ./build-container.sh
