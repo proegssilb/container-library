@@ -5,5 +5,4 @@ environment:
   - CONTAINER=hyperkube-iscsi
 
 script:
-  - chmod u+x ./build-container.sh
-  - ./build-container.sh
+  - docker build -t proegssilb/$CONTAINER $CONTAINER/
