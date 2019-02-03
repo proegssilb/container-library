@@ -1,3 +1,5 @@
+language: minimal
+
 services:
   - docker
 
@@ -5,4 +7,5 @@ env:
   - CONTAINER=hyperkube-iscsi
 
 script:
-  - docker build -t proegssilb/$CONTAINER $CONTAINER/
+  - echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1
+  - docker build -t $(echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1)/$CONTAINER $CONTAINER/
