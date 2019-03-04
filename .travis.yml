@@ -4,7 +4,7 @@ services:
   - docker
 
 env:
-  - CONTAINER=hyperkube-iscsi
+  - CONTAINER=config-builder
 
 script:
   - echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1
