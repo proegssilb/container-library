@@ -13,8 +13,8 @@ ARG factorio_version
 
 ENV VERSION $factorio_version
 
-RUN wget --quiet https://www.factorio.com/get-download/${VERSION}/headless/linux64 -O /tmp/factorio.tar.xz && \
-    tar -xJf /tmp/factorio.tar.xz && rm /tmp/factorio.tar.xz
+RUN wget --quiet https://www.factorio.com/get-download/${VERSION}/headless/linux64 -O /tmp/factorio.tar.xz
+RUN tar -xJf /tmp/factorio.tar.xz && rm /tmp/factorio.tar.xz
 
 WORKDIR /opt/factorio
 
