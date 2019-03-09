@@ -9,7 +9,7 @@ VOLUME /opt/factorio/saves /opt/factorio/mods
 RUN apt-get update && apt-get dist-upgrade -y && \
     apt install -y xz-utils wget && apt-get clean
 
-ARG factorio_version
+ARG factorio_version=0.16.51
 
 ENV VERSION $factorio_version
 
