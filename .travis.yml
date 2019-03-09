@@ -8,4 +8,4 @@ env:
   - CONTAINER=factorio EXTRA_ARGS="--build-arg factorio-version=0.17.9"
 
 script:
-  - echo build -t $(echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1)/$CONTAINER $EXTRA_ARGS $CONTAINER/ | bash
+  - echo docker build -t $(echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1)/$CONTAINER $EXTRA_ARGS $CONTAINER/ | bash
