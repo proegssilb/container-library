@@ -4,8 +4,9 @@ services:
   - docker
 
 env:
-  - CONTAINER=config-builder
+  - CONTAINER=config-builder EXTRA_ARGS=""
+  - CONTAINER=factorio EXTRA_ARGS="--build-arg factorio-version=0.17.4"
 
 script:
   - echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1
-  - docker build -t $(echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1)/$CONTAINER $CONTAINER/
+  - docker build -t $(echo ${TRAVIS_REPO_SLUG} | cut -d '/' -f 1)/$CONTAINER ${EXTRA_ARGS} $CONTAINER/
