@@ -6,4 +6,4 @@ RUN apk --no-cache add gettext
 
 COPY main.sh .
 
-CMD main.sh
+CMD ./main.sh
