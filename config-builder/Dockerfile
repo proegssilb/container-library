@@ -4,6 +4,8 @@ LABEL maintainer="proegssilb@gmail.com"
 
 RUN apk --no-cache add gettext
 
-COPY main.sh .
+COPY main.sh /
 
-CMD ./main.sh
+RUN chmod u+x /main.sh
+
+CMD /main.sh
