@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-events
+  labels:
+    app: {{ .Release.Name }}-events
+spec:
+   
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-events
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-events
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: events
+          image: cr.agilicus.com/corp-tools/taiga-container-build/taiga_events
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
+            - secretRef:
+                name: {{ .Release.Name }}-secrets
+          env:
+          - name: TAIGA_RABBITMQ
+            value: {{ .Release.Name }}-rabbitmq
+          ports:
+            - name: http
+              containerPort: 8888

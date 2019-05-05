@@ -1,0 +1,141 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  labels:
+    app: {{ .Release.Name }}-backend
+spec:
+
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-backend
+    spec:
+      imagePullSecrets:
+        - name: regcred
+
+      initContainers:
+        - name: init-backend
+          image: gcr.io/google-containers/busybox
+          command: ['sh', '-c', 'mkdir -p /var/backups/taiga && chown -R 1000:1000 /taiga_backend/media /var/backups/taiga']
+          volumeMounts:
+            - name: taiga-backend-media
+              mountPath: /taiga_backend/media
+            - name: taiga-backup
+              mountPath: /var/backups/taiga
+              subPath: taiga
+          securityContext:
+            runAsUser: 0
+      containers:
+        - name: backend
+          image: cr.agilicus.com/corp-tools/taiga-container-build/taiga_backend
+          imagePullPolicy: Always
+          command: ['/scripts/entrypoint.sh']
+          args: ['gunicorn', '-b', '0.0.0.0:8000', '--access-logfile', '-', '--access-logfile', '-', 'taiga.wsgi']
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
+            - secretRef:
+                name: {{ .Release.Name }}-secrets
+          env:
+          - name: TAIGA_BACKEND
+            value: {{ .Release.Name }}-backend
+          - name: TAIGA_FRONTEND
+            value: {{ .Release.Name }}-frontend
+          - name: TAIGA_REDIS
+            value: {{ .Release.Name }}-redis
+          - name: TAIGA_RABBITMQ
+            value: {{ .Release.Name }}-rabbitmq
+          - name: TAIGA_POSTGRESQL
+            value: {{ .Release.Name }}-postgresql
+          - name: DJANGO_ALLOWED_HOSTS
+            value: {{ .Values.TAIGA_HOSTNAME }}
+          - name: TAIGA_API_URL
+            value: https://{{ .Values.TAIGA_HOSTNAME }}/api/v1/
+          - name: TAIGA_EVENTS_URL
+            value: wss://{{ .Values.TAIGA_HOSTNAME }}/events
+          - name: DJANGO_DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-configmap
+                key: POSTGRES_DB
+          - name: DJANGO_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: POSTGRES_PASSWORD
+          - name: DJANGO_DB_USER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-configmap
+                key: POSTGRES_USER
+          - name: DJANGO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secrets
+                key: TAIGA_SECRET
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          volumeMounts:
+            - name: taiga-backend-media
+              mountPath: /taiga_backend/media
+            - name: taiga-backup
+              mountPath: /var/backups/taiga
+              subPath: taiga
+      volumes:
+        - name: taiga-backup
+          persistentVolumeClaim:
+{{ if .Values.taiga_backup_claim }}
+            claimName: {{ .Values.taiga_backup_claim }}
+{{ else }}
+            claimName: pv-taiga-backup
+{{ end }}
+
+        - name: taiga-backend-media
+          persistentVolumeClaim:
+{{ if .Values.taiga_volume_claim }}
+            claimName: {{ .Values.taiga_volume_claim }}
+{{ else }}
+            claimName: pv-taiga-backend
+{{ end }}
+
+{{ if .Values.taiga_volume_claim }}
+{{ else }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv-taiga-backend
+  annotations:
+    volume.alpha.kubernetes.io/storage-class: default
+    #helm.sh/resource-policy: keep
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 5Gi
+{{ end }}
+
+{{ if .Values.taiga_backup_claim }}
+{{ else }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv-taiga-backup
+  annotations:
+    volume.alpha.kubernetes.io/storage-class: default
+    #helm.sh/resource-policy: keep
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 5Gi
+{{ end }}

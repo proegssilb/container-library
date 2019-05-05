@@ -1,0 +1,107 @@
+categories:
+  - Dev Tools
+  - Project Management
+  - DevOps
+  - Wiki
+  - Issue Tracker
+questions:
+  # SQL
+  - variable: POSTGRES_DB
+    default: "taiga"
+    description: "Database name for Taiga in Postgresql"
+    type: string
+    required: true
+    label: "SQL DB Name"
+     group: "SQL"
+    valid_chars: "[a-zA-Z_]+"
+  - variable: POSTGRES_USER
+    description: "Username to use while connecting to Postgresql"
+    label: "SQL User Name"
+    type: string
+    default: "taiga"
+    required: true
+     group: "SQL"
+    valid_chars: "[a-zA-Z_]+"
+  - variable: POSTGRES_PASSWORD
+    description: "Password to use while connecting to Postgresql. Randomized every deployment by default."
+    label: "SQL User Password"
+    type: password
+    required: false
+     group: "SQL"
+  # RabbitMQ
+  - variable: RABBITMQ_DEFAULT_USER
+    description: "Username for connecting to RabbitMQ"
+    label: "Queue User Name"
+    type: string
+    default: "taiga"
+    required: true
+     group: "Rabbit MQ"
+    valid_chars: "[a-zA-Z_]+"
+  - variable: RABBITMQ_DEFAULT_PASS
+    description: "Password to use while connecting to Rabbit MQ. Randomized every deployment by default."
+    label: "Queue User Password"
+    type: password
+    required: false
+     group: "Rabbit MQ"
+  - variable: RABBITMQ_DEFAULT_VHOST
+    description: "This needs a better description"
+    label: "Queue Default VHost"
+    type: string
+    default: "/"
+    required: true
+     group: "Rabbit MQ"
+  - variable: RABBITMQ_ERLANG_COOKIE
+    description: "The shared secret all of Rabbit MQ's Erlang VMs use to secure messaging. Randomized every deployment by default."
+    label: "Erlang Cookie"
+    type: password
+    required: false
+    group: "Rabbit MQ"
+  # Web App
+  - variable: DJANGO_ALLOWED_HOSTS
+    description: "Which hosts are allowed in HTTP Headers. Prevents CSRF attacks."
+    label: "Allowed HTTP Hosts"
+    type: string
+    required: false
+    group: "Web App"
+  - variable: TAIGA_SECRET
+    description: "Shared secret required for securing sessions and other things. Randomized every deployment by default."
+    label: "Django Crypto Secret"
+    type: string
+    required: false
+    group: "Web App"
+  - variable: TAIGA_HOSTNAME
+    description: "Client-Facing Domain, as per DNS."
+    label: "Domain Name"
+    type: string
+    required: false
+    group: "Web App"
+  - variable: TAIGA_HOSTNAME
+    description: "Client-Facing Domain, as per DNS."
+    label: "Domain Name"
+    type: string
+    required: false
+    group: "Web App"
+  - variable: TAIGA_PUBLIC_REGISTER_ENABLED
+    description: "Allow the public to create new users"
+    label: "Public registration"
+    type: boolean
+    required: false
+    group: "Web App"
+  - variable: TAIGA_DB_CHECK_SLEEP_INTERVAL
+    description: "Time to wait between retries while doing the initial DB check, in seconds"
+    label: "DB Check Retry Delay (s)"
+    type: int
+    min: 1
+    max: 300
+    default: 5
+    required: false
+    group: "Web App"
+  - variable: TAIGA_DB_CHECK_LIMIT_RETRIES
+    description: "Maximum number of retries while doing the initial DB check"
+    label: "DB Check Retry Count"
+    type: int
+    min: 1
+    max: 50
+    default: 10
+    required: false
+    group: "Web App"
